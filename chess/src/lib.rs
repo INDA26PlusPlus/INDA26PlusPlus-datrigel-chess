@@ -5,6 +5,8 @@
 //     #                              #
 //     ################################
 
+use crate::{Color::White, Rank::{Bishop, Rook}};
+
 
 // Specifing what colors exist.
     // derive -> compiler can add prewritten implements.
@@ -18,12 +20,12 @@ pub enum Color {
 #[derive(Copy, Clone, Debug)]
 pub enum Rank {
     Demon,
-    Ki,
-    Q,
-    B,
-    Kn,
-    R,
-    P,
+    King,
+    Queen,
+    Bishop,
+    Knight,
+    Rook,
+    Pawn,
     Empty,
 }
 // Struct for the pieces.
@@ -64,18 +66,38 @@ impl Board {
     // Creates a board object with nothing on it.
     pub fn init_board() -> Board {
         // Creates the board with demon on one square and rest null.
-        let gameboard = Board { 
+        let mut gameboard = Board { 
             squares: [NULLTOKEN; 64],
         };
+       
+        //     ################################
+        //     #        Init boardstate       #
+        //     ################################ 
+        
+        // Places white rooks onto the board.
+        gameboard.set_demon(0, White, Rook);
+        gameboard.set_demon(7, White, Rook);
+        
+        // Places white bishop onto the board.
+        gameboard.set_demon(2, White, Bishop);
+        gameboard.set_demon(5, White, Bishop);
+        
+        
+        
+        
+        
+        
+        
+        
         return gameboard;
     }
 
-    // Places a demon onto the board.
-    pub fn set_demon(&mut self, start: usize) {
+    // Places a demon (Or any piece) onto the board.
+    pub fn set_demon(&mut self, start: usize, color_piece: Color, rank_piece: Rank) {
          // Creates a demon object = White,Demon
         let demon = Piece { 
-            color: Color::White, 
-            rank: Rank::Demon,
+            color: color_piece,
+            rank: rank_piece,
         }; 
         // Takes in a created Board object and sets the input square to the demon.      
         self.squares[start as usize] = demon;
@@ -90,6 +112,17 @@ impl Board {
                 color,
                 rank: Rank::Demon,
             } => self.move_demon(start, dest),
+            // Matches for move with rook
+            Piece {
+                color: Color,
+                rank: Rank::Rook,
+            } => self.move_rook(start, dest),
+            // Matches for move with bishop
+            Piece {
+                color: Color,
+                rank: Rank::Bishop,
+            } => self.move_bishop(start, dest),
+
             // Placeholder
             Piece {
                 color: Color,
@@ -98,18 +131,43 @@ impl Board {
         }
     }
 
-
     //     ################################
-    //     #                              #
     //     #         Move Logic           #
-    //     #                              #
     //     ################################
-
 
     // Move logic of the Demon rank.
     fn move_demon(&mut self, start: usize, dest: usize) {
-        self.squares[dest as usize] = self.squares[start];
+        self.squares[dest] = self.squares[start];
         self.squares[start] = NULLTOKEN;
+    }
+    // Move logic for the Rook rank.
+    fn move_rook(&mut self, start: usize, dest: usize) {
+        // Checks if move prompted is to the same offset on the x- or y-axis, else does nothing.
+        if dest % 8 == start % 8 {
+            self.move_demon(start, dest);
+        } else if dest / 8 == start / 8 {
+            self.move_demon(start, dest);
+        } else {
+            return;
+        }
+    }
+    // Move logic for the Bishop.
+    fn move_bishop(&mut self, start: usize, dest: usize) {
+        // Checks if the difference + the original offset 
+        if dest % 8 == (((((dest / 8) - (start / 8)) as f32).abs() as usize) + (start % 8)) {
+            self.move_demon(start, dest);
+        } 
+        // Checks 
+        else if dest % 8 == (((((dest / 8) - (start / 8)) as f32).abs() as usize) - (start % 8)){
+            self.move_demon(start, dest);
+        } else {
+            return;
+        }
+    }
+    // Move logic for the Knight
+    fn move_knight(&mut self, start: usize, dest: usize){
+        // Checks if the 
+
     }
 
 }
