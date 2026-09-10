@@ -2,7 +2,7 @@ use chess::*;
 
 fn main() {
     let start: usize = 2;
-    let dest: usize = 10;
+    let dest: usize = 11;
 
     let mut testboard = Board::init_board();
 
